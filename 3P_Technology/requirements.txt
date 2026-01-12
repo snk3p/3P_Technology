@@ -1,0 +1,12 @@
+streamlit
+pandas
+numpy
+python-dotenv
+tqdm
+scikit-learn
+networkx
+python-pptx
+uvicorn
+fastapi
+pydantic
+pyvis

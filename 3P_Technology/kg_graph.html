@@ -1,0 +1,155 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 700px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#66cc66", "id": "P001", "label": "P001", "shape": "dot", "title": "{\u0027project_id\u0027: \u0027P001\u0027, \u0027name\u0027: \u0027Warehouse PLC migration\u0027, \u0027industry\u0027: \u0027logistics\u0027, \u0027platforms\u0027: [\u0027Siemens S7-1500\u0027, \u0027Factory IO\u0027], \u0027io_points\u0027: 128, \u0027analog_points\u0027: 20, \u0027digital_points\u0027: 108, \u0027protocols\u0027: [\u0027Profinet\u0027, \u0027OPC UA\u0027], \u0027estimated_hours\u0027: 320, \u0027actual_hours\u0027: 285, \u0027common_errors\u0027: [\u0027wrong IO mapping\u0027, \u0027missing earthing\u0027], \u0027lessons\u0027: [\u0027allocate 20% time for hardware interface\u0027], \u0027date_completed\u0027: \u00272024-09-12\u0027, \u0027hour_delta\u0027: -35, \u0027on_time\u0027: True}"}, {"color": "#ffcc00", "id": "industry:logistics", "label": "industry:logistics", "shape": "diamond", "title": "{\u0027type\u0027: \u0027industry\u0027}"}, {"color": "#00ccff", "id": "platform:Siemens S7-1500", "label": "platform:Siemens S7-1500", "shape": "triangle", "title": "{\u0027type\u0027: \u0027platform\u0027}"}, {"color": "#00ccff", "id": "platform:Factory IO", "label": "platform:Factory IO", "shape": "triangle", "title": "{\u0027type\u0027: \u0027platform\u0027}"}, {"color": "#66cc66", "id": "P002", "label": "P002", "shape": "dot", "title": "{\u0027project_id\u0027: \u0027P002\u0027, \u0027name\u0027: \u0027Food processing line upgrade\u0027, \u0027industry\u0027: \u0027food\u0027, \u0027platforms\u0027: [\u0027Rockwell ControlLogix\u0027], \u0027io_points\u0027: 200, \u0027analog_points\u0027: 40, \u0027digital_points\u0027: 160, \u0027protocols\u0027: [\u0027EtherNet/IP\u0027], \u0027estimated_hours\u0027: 480, \u0027actual_hours\u0027: 520, \u0027common_errors\u0027: [\u0027network config errors\u0027], \u0027lessons\u0027: [\u0027test redundancy scenarios in staging\u0027], \u0027date_completed\u0027: \u00272024-11-02\u0027, \u0027hour_delta\u0027: 40, \u0027on_time\u0027: False}"}, {"color": "#ffcc00", "id": "industry:food", "label": "industry:food", "shape": "diamond", "title": "{\u0027type\u0027: \u0027industry\u0027}"}, {"color": "#00ccff", "id": "platform:Rockwell ControlLogix", "label": "platform:Rockwell ControlLogix", "shape": "triangle", "title": "{\u0027type\u0027: \u0027platform\u0027}"}, {"color": "#66cc66", "id": "P003", "label": "P003", "shape": "dot", "title": "{\u0027project_id\u0027: \u0027P003\u0027, \u0027name\u0027: \u0027Pharmaceutical batching system\u0027, \u0027industry\u0027: \u0027pharma\u0027, \u0027platforms\u0027: [\u0027Siemens S7-1500\u0027, \u0027Wonderware\u0027], \u0027io_points\u0027: 350, \u0027analog_points\u0027: 120, \u0027digital_points\u0027: 230, \u0027protocols\u0027: [\u0027Profinet\u0027, \u0027OPC UA\u0027, \u0027Modbus\u0027], \u0027estimated_hours\u0027: 900, \u0027actual_hours\u0027: 812, \u0027common_errors\u0027: [\u0027recipe mapping issues\u0027], \u0027lessons\u0027: [\u0027use ISA-88 templates for recipes\u0027], \u0027date_completed\u0027: \u00272023-06-20\u0027, \u0027hour_delta\u0027: -88, \u0027on_time\u0027: True}"}, {"color": "#ffcc00", "id": "industry:pharma", "label": "industry:pharma", "shape": "diamond", "title": "{\u0027type\u0027: \u0027industry\u0027}"}, {"color": "#00ccff", "id": "platform:Wonderware", "label": "platform:Wonderware", "shape": "triangle", "title": "{\u0027type\u0027: \u0027platform\u0027}"}, {"color": "#66cc66", "id": "P004", "label": "P004", "shape": "dot", "title": "{\u0027project_id\u0027: \u0027P004\u0027, \u0027name\u0027: \u0027Energy substation automation\u0027, \u0027industry\u0027: \u0027energy\u0027, \u0027platforms\u0027: [\u0027ABB 800xA\u0027], \u0027io_points\u0027: 80, \u0027analog_points\u0027: 30, \u0027digital_points\u0027: 50, \u0027protocols\u0027: [\u0027IEC 61850\u0027, \u0027Modbus\u0027], \u0027estimated_hours\u0027: 240, \u0027actual_hours\u0027: 210, \u0027common_errors\u0027: [\u0027timing issues on protection relays\u0027], \u0027lessons\u0027: [\u0027synchronise time sources early\u0027], \u0027date_completed\u0027: \u00272023-12-05\u0027, \u0027hour_delta\u0027: -30, \u0027on_time\u0027: True}"}, {"color": "#ffcc00", "id": "industry:energy", "label": "industry:energy", "shape": "diamond", "title": "{\u0027type\u0027: \u0027industry\u0027}"}, {"color": "#00ccff", "id": "platform:ABB 800xA", "label": "platform:ABB 800xA", "shape": "triangle", "title": "{\u0027type\u0027: \u0027platform\u0027}"}, {"color": "#66cc66", "id": "P005", "label": "P005", "shape": "dot", "title": "{\u0027project_id\u0027: \u0027P005\u0027, \u0027name\u0027: \u0027Building automation - HVAC control\u0027, \u0027industry\u0027: \u0027construction\u0027, \u0027platforms\u0027: [\u0027BACnet devices\u0027, \u0027Siemens Desigo\u0027], \u0027io_points\u0027: 60, \u0027analog_points\u0027: 22, \u0027digital_points\u0027: 38, \u0027protocols\u0027: [\u0027BACnet\u0027], \u0027estimated_hours\u0027: 160, \u0027actual_hours\u0027: 149, \u0027common_errors\u0027: [\u0027misconfigured BACnet device IDs\u0027], \u0027lessons\u0027: [\u0027device ID registry prevents conflicts\u0027], \u0027date_completed\u0027: \u00272024-01-17\u0027, \u0027hour_delta\u0027: -11, \u0027on_time\u0027: True}"}, {"color": "#ffcc00", "id": "industry:construction", "label": "industry:construction", "shape": "diamond", "title": "{\u0027type\u0027: \u0027industry\u0027}"}, {"color": "#00ccff", "id": "platform:BACnet devices", "label": "platform:BACnet devices", "shape": "triangle", "title": "{\u0027type\u0027: \u0027platform\u0027}"}, {"color": "#00ccff", "id": "platform:Siemens Desigo", "label": "platform:Siemens Desigo", "shape": "triangle", "title": "{\u0027type\u0027: \u0027platform\u0027}"}, {"color": "#66cc66", "id": "P006", "label": "P006", "shape": "dot", "title": "{\u0027project_id\u0027: \u0027P006\u0027, \u0027name\u0027: \u0027Chemical dosing control\u0027, \u0027industry\u0027: \u0027chemical\u0027, \u0027platforms\u0027: [\u0027Siemens S7-1200\u0027], \u0027io_points\u0027: 40, \u0027analog_points\u0027: 18, \u0027digital_points\u0027: 22, \u0027protocols\u0027: [\u0027Profinet\u0027], \u0027estimated_hours\u0027: 120, \u0027actual_hours\u0027: 132, \u0027common_errors\u0027: [\u0027sensor calibration drift\u0027], \u0027lessons\u0027: [\u0027schedule calibration in commissioning plan\u0027], \u0027date_completed\u0027: \u00272022-08-01\u0027, \u0027hour_delta\u0027: 12, \u0027on_time\u0027: False}"}, {"color": "#ffcc00", "id": "industry:chemical", "label": "industry:chemical", "shape": "diamond", "title": "{\u0027type\u0027: \u0027industry\u0027}"}, {"color": "#00ccff", "id": "platform:Siemens S7-1200", "label": "platform:Siemens S7-1200", "shape": "triangle", "title": "{\u0027type\u0027: \u0027platform\u0027}"}, {"color": "#66cc66", "id": "P007", "label": "P007", "shape": "dot", "title": "{\u0027project_id\u0027: \u0027P007\u0027, \u0027name\u0027: \u0027Packaging conveyor optimization\u0027, \u0027industry\u0027: \u0027food\u0027, \u0027platforms\u0027: [\u0027Rockwell ControlLogix\u0027], \u0027io_points\u0027: 95, \u0027analog_points\u0027: 25, \u0027digital_points\u0027: 70, \u0027protocols\u0027: [\u0027EtherNet/IP\u0027], \u0027estimated_hours\u0027: 210, \u0027actual_hours\u0027: 188, \u0027common_errors\u0027: [\u0027PLC scan overload during peak cycles\u0027], \u0027lessons\u0027: [\u0027spread IO across CPUs\u0027], \u0027date_completed\u0027: \u00272024-05-09\u0027, \u0027hour_delta\u0027: -22, \u0027on_time\u0027: True}"}, {"color": "#66cc66", "id": "P008", "label": "P008", "shape": "dot", "title": "{\u0027project_id\u0027: \u0027P008\u0027, \u0027name\u0027: \u0027Water treatment automation\u0027, \u0027industry\u0027: \u0027utilities\u0027, \u0027platforms\u0027: [\u0027Siemens S7-1500\u0027], \u0027io_points\u0027: 140, \u0027analog_points\u0027: 60, \u0027digital_points\u0027: 80, \u0027protocols\u0027: [\u0027OPC UA\u0027, \u0027Modbus\u0027], \u0027estimated_hours\u0027: 360, \u0027actual_hours\u0027: 365, \u0027common_errors\u0027: [\u0027RTU comms timeouts\u0027], \u0027lessons\u0027: [\u0027periodic watchdog and backoff retries\u0027], \u0027date_completed\u0027: \u00272024-03-22\u0027, \u0027hour_delta\u0027: 5, \u0027on_time\u0027: False}"}, {"color": "#ffcc00", "id": "industry:utilities", "label": "industry:utilities", "shape": "diamond", "title": "{\u0027type\u0027: \u0027industry\u0027}"}, {"color": "#66cc66", "id": "P009", "label": "P009", "shape": "dot", "title": "{\u0027project_id\u0027: \u0027P009\u0027, \u0027name\u0027: \u0027High-speed sorting line\u0027, \u0027industry\u0027: \u0027logistics\u0027, \u0027platforms\u0027: [\u0027Siemens S7-1500\u0027, \u0027Vision sensors\u0027], \u0027io_points\u0027: 420, \u0027analog_points\u0027: 70, \u0027digital_points\u0027: 350, \u0027protocols\u0027: [\u0027Profinet\u0027, \u0027OPC UA\u0027], \u0027estimated_hours\u0027: 1100, \u0027actual_hours\u0027: 980, \u0027common_errors\u0027: [\u0027vision sync errors\u0027, \u0027IO jitter\u0027], \u0027lessons\u0027: [\u0027isolate vision network and prioritise real-time\u0027], \u0027date_completed\u0027: \u00272024-10-01\u0027, \u0027hour_delta\u0027: -120, \u0027on_time\u0027: True}"}, {"color": "#00ccff", "id": "platform:Vision sensors", "label": "platform:Vision sensors", "shape": "triangle", "title": "{\u0027type\u0027: \u0027platform\u0027}"}, {"color": "#66cc66", "id": "P010", "label": "P010", "shape": "dot", "title": "{\u0027project_id\u0027: \u0027P010\u0027, \u0027name\u0027: \u0027Fire compliance upgrades (BR18 Chapter 5)\u0027, \u0027industry\u0027: \u0027construction\u0027, \u0027platforms\u0027: [\u0027Building management integration\u0027], \u0027io_points\u0027: 30, \u0027analog_points\u0027: 6, \u0027digital_points\u0027: 24, \u0027protocols\u0027: [\u0027BACnet\u0027], \u0027estimated_hours\u0027: 80, \u0027actual_hours\u0027: 75, \u0027common_errors\u0027: [\u0027documentation mismatch\u0027], \u0027lessons\u0027: [\u0027keep versioned documentation in repo\u0027], \u0027date_completed\u0027: \u00272024-07-30\u0027, \u0027hour_delta\u0027: -5, \u0027on_time\u0027: True}"}, {"color": "#00ccff", "id": "platform:Building management integration", "label": "platform:Building management integration", "shape": "triangle", "title": "{\u0027type\u0027: \u0027platform\u0027}"}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "P001", "label": "belongs_to", "to": "industry:logistics"}, {"arrows": "to", "from": "P001", "label": "uses", "to": "platform:Siemens S7-1500"}, {"arrows": "to", "from": "P001", "label": "uses", "to": "platform:Factory IO"}, {"arrows": "to", "from": "P002", "label": "belongs_to", "to": "industry:food"}, {"arrows": "to", "from": "P002", "label": "uses", "to": "platform:Rockwell ControlLogix"}, {"arrows": "to", "from": "P003", "label": "belongs_to", "to": "industry:pharma"}, {"arrows": "to", "from": "P003", "label": "uses", "to": "platform:Siemens S7-1500"}, {"arrows": "to", "from": "P003", "label": "uses", "to": "platform:Wonderware"}, {"arrows": "to", "from": "P004", "label": "belongs_to", "to": "industry:energy"}, {"arrows": "to", "from": "P004", "label": "uses", "to": "platform:ABB 800xA"}, {"arrows": "to", "from": "P005", "label": "belongs_to", "to": "industry:construction"}, {"arrows": "to", "from": "P005", "label": "uses", "to": "platform:BACnet devices"}, {"arrows": "to", "from": "P005", "label": "uses", "to": "platform:Siemens Desigo"}, {"arrows": "to", "from": "P006", "label": "belongs_to", "to": "industry:chemical"}, {"arrows": "to", "from": "P006", "label": "uses", "to": "platform:Siemens S7-1200"}, {"arrows": "to", "from": "P007", "label": "belongs_to", "to": "industry:food"}, {"arrows": "to", "from": "P007", "label": "uses", "to": "platform:Rockwell ControlLogix"}, {"arrows": "to", "from": "P008", "label": "belongs_to", "to": "industry:utilities"}, {"arrows": "to", "from": "P008", "label": "uses", "to": "platform:Siemens S7-1500"}, {"arrows": "to", "from": "P009", "label": "belongs_to", "to": "industry:logistics"}, {"arrows": "to", "from": "P009", "label": "uses", "to": "platform:Siemens S7-1500"}, {"arrows": "to", "from": "P009", "label": "uses", "to": "platform:Vision sensors"}, {"arrows": "to", "from": "P010", "label": "belongs_to", "to": "industry:construction"}, {"arrows": "to", "from": "P010", "label": "uses", "to": "platform:Building management integration"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
